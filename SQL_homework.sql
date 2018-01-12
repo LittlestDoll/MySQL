@@ -82,3 +82,56 @@ as that is exactly what the actor will be with the grievous error.
 BE CAREFUL NOT TO CHANGE THE FIRST NAME OF EVERY ACTOR TO MUCHO GROUCHO, HOWEVER! 
 (Hint: update the record using a unique identifier.) */
 
+****************************************
+
+SELECT first_name FROM actor
+IF first_name = 'HARPO' THEN 
+    UPDATE actor 
+    SET first_name = REPLACE(first_name, 'HARPO', 'GROUCHO')
+ELSE
+    UPDATE actor 
+    SET first_name = REPLACE(first_name, 'HARPO', 'MUCHO GROUCHO')
+END IF;    
+
+****************************************
+
+/* 5a. You cannot locate the schema of the address table. Which query would you use to re-create it? */
+
+SELECT `table_schema` 
+FROM `information_schema`.`tables` 
+WHERE `table_name` = 'address';
+
+/* 6a. Use JOIN to display the first and last names, as well as the address, of each staff member. 
+Use the tables staff and address: */
+
+SELECT s.first_name, s.last_name, a.address
+FROM address a
+    JOIN staff s
+ON a.address_id = s.address_id;    
+
+/* 6b. Use JOIN to display the total amount rung up by each staff member in August of 2005. 
+Use tables staff and payment. */
+
+**************************************************
+
+SELECT s.first_name, s.last_name, SUM(p.amount) AS gross
+	FROM payment p
+	JOIN staff s ON (s.staff_id = p.staff_id)
+		WHERE p.payment_date > 08012005 AND p.payment_date < 08312005
+    GROUP BY s.staff_id;     
+
+***************************************************    
+
+/* 6c. List each film and the number of actors who are listed for that film. 
+Use tables film_actor and film. Use inner join. */
+
+SELECT f.title, COUNT(actor_id) AS Actors 
+    FROM film f
+    INNER JOIN film_actor fa ON f.film_id = fa.film_id 
+    GROUP BY f.title;
+
+/* 6d. How many copies of the film Hunchback Impossible exist in the inventory system? */
+
+/* 6e. Using the tables payment and customer and the JOIN command, 
+list the total paid by each customer. 
+List the customers alphabetically by last name: */
