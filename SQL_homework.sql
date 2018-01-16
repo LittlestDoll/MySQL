@@ -201,30 +201,63 @@ WHERE film_id IN
 
 /* 7e. Display the most frequently rented movies in descending order. */
 
-
+SELECT f.title, COUNT(r.rental_date) as Count
+FROM film f 
+	JOIN inventory i ON (f.film_id = i.film_id)
+    JOIN rental r ON (i.inventory_id = r.inventory_id)
+    GROUP BY f.title
+    ORDER BY Count desc;
 
 /* 7f. Write a query to display how much business, in dollars, each store brought in. */
 
-
+SELECT s.store_id, SUM(p.amount) as Amount
+FROM store s
+	JOIN customer c ON (s.store_id = c.store_id)
+    JOIN payment p ON (p.customer_id = c.customer_id)
+    GROUP BY s.store_id;
 
 /* 7g. Write a query to display for each store its store ID, city, and country. */
 
-
+SELECT s.store_id, city.city, c.country
+FROM store s 
+	JOIN address a ON (s.address_id = a.address_id)
+    JOIN city ON (a.city_id = city.city_id)
+    JOIN country c ON (city.country_id = c.country_id)
+    GROUP BY s.store_id;
 
 /* 7h. List the top five genres in gross revenue in descending order. 
 (Hint: you may need to use the following tables: category, film_category, inventory, payment, and rental.) */
 
-
+SELECT cat.name, SUM(p.amount) as Amount
+	FROM category cat 
+		JOIN film_category fc ON (cat.category_id = fc.category_id)
+        JOIN inventory i ON (fc.film_id = i.film_id)
+        JOIN rental r ON (i.inventory_id = r.inventory_id)
+        JOIN payment p ON (p.rental_id = r.rental_id)
+    GROUP BY cat.name
+    ORDER BY Amount desc
+    LIMIT 5;
 
 /* 8a. In your new role as an executive, you would like to have an easy way of viewing the 
 Top five genres by gross revenue. 
 Use the solution from the problem above to create a view. 
 If you haven't solved 7h, you can substitute another query to create a view. */
 
-
+CREATE VIEW top5_genres AS 
+SELECT cat.name, SUM(p.amount) as Amount
+	FROM category cat 
+		JOIN film_category fc ON (cat.category_id = fc.category_id)
+        JOIN inventory i ON (fc.film_id = i.film_id)
+        JOIN rental r ON (i.inventory_id = r.inventory_id)
+        JOIN payment p ON (p.rental_id = r.rental_id)
+    GROUP BY cat.name
+    ORDER BY Amount desc
+    LIMIT 5; 
 
 /* 8b. How would you display the view that you created in 8a? */
 
-
+SELECT * FROM top5_genres;
 
 /* 8c. You find that you no longer need the view top_five_genres. Write a query to delete it. */
+
+DROP VIEW top5_genres;
